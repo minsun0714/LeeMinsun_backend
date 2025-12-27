@@ -1,4 +1,4 @@
-package com.wirebarley.codingtest.account.domain.policy;
+package com.wirebarley.codingtest.account.domain.policy.withdraw;
 
 import com.wirebarley.codingtest.account.domain.Account;
 import com.wirebarley.codingtest.account.domain.TransactionType;
@@ -13,7 +13,7 @@ import java.time.*;
 
 @Component
 @RequiredArgsConstructor
-public class DailyWithdrawLimitPolicy implements WithdrawPolicy {
+public class WithdrawPolicy implements WithdrawLimitPolicy {
 
     private static final BigDecimal DAILY_LIMIT = BigDecimal.valueOf(1_000_000);
 
@@ -25,7 +25,7 @@ public class DailyWithdrawLimitPolicy implements WithdrawPolicy {
         ZonedDateTime end = start.plusDays(1);
 
         BigDecimal todayTotalWithdrawAmount =
-                transactionHistoryRepository.sumWithdrawAmountBetween(account.getId(), TransactionType.WITHDRAW, start, end);
+                transactionHistoryRepository.sumTransactionAmountBetweenByTransactionType(account.getId(), TransactionType.WITHDRAW, start, end);
 
         if (todayTotalWithdrawAmount == null) {
             todayTotalWithdrawAmount = BigDecimal.ZERO;
