@@ -69,4 +69,18 @@ public class Account {
     private void validateClosable() {
         state(this.status == AccountStatus.ACTIVE, "이미 삭제된 계좌입니다.");
     }
+
+    public void deposit(BigDecimal amount) {
+        validateActive();
+        validateAmount(amount);
+        this.balance = this.balance.add(amount);
+    }
+
+    private void validateActive() {
+        state(this.status == AccountStatus.ACTIVE, "비활성 계좌입니다.");
+    }
+
+    private static void validateAmount(BigDecimal amount) {
+        state(amount != null && amount.compareTo(BigDecimal.ZERO) > 0, "입금 금액은 0보다 커야 합니다.");
+    }
 }
