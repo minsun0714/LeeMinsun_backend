@@ -1,7 +1,6 @@
 package com.wirebarley.codingtest.account.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -60,5 +59,14 @@ public class Account {
         state(accountNumber != null && !accountNumber.isBlank(), "계좌번호는 필수입니다.");
         state(initialBalance != null, "초기 잔액은 필수입니다.");
         state(initialBalance.compareTo(BigDecimal.ZERO) >= 0, "초기 잔액은 음수가 될 수 없습니다.");
+    }
+
+    public void close() {
+        validateClosable();
+        this.status = AccountStatus.CLOSED;
+    }
+
+    private void validateClosable() {
+        state(this.status == AccountStatus.ACTIVE, "이미 삭제된 계좌입니다.");
     }
 }
