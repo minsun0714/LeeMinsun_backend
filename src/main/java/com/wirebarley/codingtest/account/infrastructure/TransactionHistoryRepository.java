@@ -2,6 +2,8 @@ package com.wirebarley.codingtest.account.infrastructure;
 
 import com.wirebarley.codingtest.account.domain.TransactionHistory;
 import com.wirebarley.codingtest.account.domain.TransactionType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,5 +26,17 @@ public interface TransactionHistoryRepository extends JpaRepository<TransactionH
             @Param("type") TransactionType type,
             @Param("start") ZonedDateTime start,
             @Param("end") ZonedDateTime end
+    );
+
+    Page<TransactionHistory> findByAccountIdAndTypeOrderByCreatedAtDesc(
+            Long accountId,
+            TransactionType type,
+            Pageable pageable
+    );
+
+    Page<TransactionHistory> findByCounterpartyIdAndTypeOrderByCreatedAtDesc(
+            Long counterpartyId,
+            TransactionType type,
+            Pageable pageable
     );
 }
