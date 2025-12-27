@@ -3,10 +3,12 @@ package com.wirebarley.codingtest.account.application.service;
 import com.wirebarley.codingtest.account.application.dto.request.*;
 import com.wirebarley.codingtest.account.application.dto.response.*;
 import com.wirebarley.codingtest.account.domain.Account;
+import com.wirebarley.codingtest.account.domain.TransactionHistory;
 import com.wirebarley.codingtest.account.domain.policy.transfer.TransferPolicy;
 import com.wirebarley.codingtest.account.domain.policy.transfer.TransferLimitPolicy;
 import com.wirebarley.codingtest.account.domain.policy.withdraw.WithdrawLimitPolicy;
 import com.wirebarley.codingtest.account.infrastructure.AccountRepository;
+import com.wirebarley.codingtest.account.infrastructure.TransactionHistoryRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,7 @@ import java.util.stream.Stream;
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
+    private final TransactionHistoryRepository transactionHistoryRepository;
     private final WithdrawLimitPolicy withdrawLimitPolicy;
     private final TransferLimitPolicy transferLimitPolicy;
 
@@ -53,6 +56,13 @@ public class AccountServiceImpl implements AccountService {
 
         account.deposit(depositDto.amount());
 
+        TransactionHistory transactionHistory = TransactionHistory.deposit(
+                depositDto.accountId(),
+                depositDto.amount()
+        );
+
+        transactionHistoryRepository.save(transactionHistory);
+
         return DepositResponseDto.from(account);
     }
 
@@ -64,6 +74,13 @@ public class AccountServiceImpl implements AccountService {
         withdrawLimitPolicy.validate(account, withdrawDto.amount(), LocalDate.now());
 
         account.withdraw(withdrawDto.amount());
+
+        TransactionHistory transactionHistory = TransactionHistory.withdraw(
+                withdrawDto.accountId(),
+                withdrawDto.amount()
+        );
+
+        transactionHistoryRepository.save(transactionHistory);
 
         return WithdrawResponseDto.from(account);
     }
@@ -93,6 +110,15 @@ public class AccountServiceImpl implements AccountService {
         fromAccount.withdraw(transferCtx.totalWithdrawAmount());
         toAccount.deposit(transferDto.amount());
 
+        TransactionHistory transactionHistory = TransactionHistory.transfer(
+                fromAccount.getId(),
+                toAccount.getId(),
+                transferDto.amount()
+        );
+
+        transactionHistoryRepository.save(transactionHistory);
+
         return TransferResponseDto.from(fromAccount, toAccount, transferCtx);
     }
 }
+
