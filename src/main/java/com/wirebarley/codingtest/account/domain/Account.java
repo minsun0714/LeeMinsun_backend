@@ -76,6 +76,17 @@ public class Account {
         this.balance = this.balance.add(amount);
     }
 
+    public void withdraw(BigDecimal amount){
+        validateActive();
+        validateAmount(amount);
+        validateBalanceSufficient(amount);
+        this.balance = this.balance.subtract(amount);
+    }
+
+    private void validateBalanceSufficient(BigDecimal amount) {
+        state(this.balance.compareTo(amount) >= 0, "잔액이 부족합니다.");
+    }
+
     private void validateActive() {
         state(this.status == AccountStatus.ACTIVE, "비활성 계좌입니다.");
     }
