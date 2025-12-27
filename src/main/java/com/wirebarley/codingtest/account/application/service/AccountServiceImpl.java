@@ -32,9 +32,18 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountCreateResponseDto create(AccountCreateDto accountCreateDto) {
-        Account account = Account.create(accountCreateDto.accountNumber(), accountCreateDto.initialAmount());
+        Account account = Account.create(
+                accountCreateDto.accountNumber(),
+                accountCreateDto.initialAmount()
+        );
 
         accountRepository.save(account);
+
+        log.info(
+                "[AccountCreated] accountId={}, initialAmount={}",
+                account.getId(),
+                accountCreateDto.initialAmount()
+        );
 
         return AccountCreateResponseDto.from(account);
     }
@@ -46,6 +55,11 @@ public class AccountServiceImpl implements AccountService {
 
         account.close();
 
+        log.info(
+                "[AccountClosed] accountId={}",
+                account.getId()
+        );
+
         return AccountCloseResponseDto.from(account);
     }
 
@@ -56,12 +70,18 @@ public class AccountServiceImpl implements AccountService {
 
         account.deposit(depositDto.amount());
 
-        TransactionHistory transactionHistory = TransactionHistory.deposit(
+        transactionHistoryRepository.save(
+                TransactionHistory.deposit(
+                        depositDto.accountId(),
+                        depositDto.amount()
+                )
+        );
+
+        log.info(
+                "[DepositSuccess] accountId={}, amount={}",
                 depositDto.accountId(),
                 depositDto.amount()
         );
-
-        transactionHistoryRepository.save(transactionHistory);
 
         return DepositResponseDto.from(account);
     }
@@ -71,16 +91,28 @@ public class AccountServiceImpl implements AccountService {
         Account account = accountRepository.findByIdForUpdate(withdrawDto.accountId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 계좌가 존재하지 않습니다."));
 
-        withdrawLimitPolicy.validate(account, withdrawDto.amount(), LocalDate.now());
-
-        account.withdraw(withdrawDto.amount());
-
-        TransactionHistory transactionHistory = TransactionHistory.withdraw(
+        log.debug(
+                "[WithdrawAttempt] accountId={}, amount={}",
                 withdrawDto.accountId(),
                 withdrawDto.amount()
         );
 
-        transactionHistoryRepository.save(transactionHistory);
+        withdrawLimitPolicy.validate(account, withdrawDto.amount(), LocalDate.now());
+
+        account.withdraw(withdrawDto.amount());
+
+        transactionHistoryRepository.save(
+                TransactionHistory.withdraw(
+                        withdrawDto.accountId(),
+                        withdrawDto.amount()
+                )
+        );
+
+        log.info(
+                "[WithdrawSuccess] accountId={}, amount={}",
+                withdrawDto.accountId(),
+                withdrawDto.amount()
+        );
 
         return WithdrawResponseDto.from(account);
     }
@@ -104,19 +136,33 @@ public class AccountServiceImpl implements AccountService {
                 .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException("수취자 계좌가 존재하지 않습니다."));
 
+        log.debug(
+                "[TransferAttempt] fromAccountId={}, toAccountId={}, amount={}",
+                fromAccount.getId(),
+                toAccount.getId(),
+                transferDto.amount()
+        );
+
         TransferPolicy.TransferContext transferCtx =
                 transferLimitPolicy.prepare(fromAccount, transferDto.amount(), LocalDate.now());
 
         fromAccount.withdraw(transferCtx.totalWithdrawAmount());
         toAccount.deposit(transferDto.amount());
 
-        TransactionHistory transactionHistory = TransactionHistory.transfer(
+        transactionHistoryRepository.save(
+                TransactionHistory.transfer(
+                        fromAccount.getId(),
+                        toAccount.getId(),
+                        transferDto.amount()
+                )
+        );
+
+        log.info(
+                "[TransferSuccess] fromAccountId={}, toAccountId={}, amount={}",
                 fromAccount.getId(),
                 toAccount.getId(),
                 transferDto.amount()
         );
-
-        transactionHistoryRepository.save(transactionHistory);
 
         return TransferResponseDto.from(fromAccount, toAccount, transferCtx);
     }
