@@ -1,7 +1,9 @@
 package com.wirebarley.codingtest.account.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
@@ -10,6 +12,7 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "transaction_histories")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TransactionHistory {
 
     @Id
@@ -32,4 +35,53 @@ public class TransactionHistory {
     @CreationTimestamp
     @Column(nullable = false)
     private OffsetDateTime createdAt;
+
+    private TransactionHistory(
+            Long accountId,
+            Long counterpartyId,
+            TransactionType type,
+            BigDecimal amount
+    ) {
+        this.accountId = accountId;
+        this.counterpartyId = counterpartyId;
+        this.type = type;
+        this.amount = amount;
+    }
+
+    public static TransactionHistory deposit(
+            Long accountId,
+            BigDecimal amount
+    ) {
+        return new TransactionHistory(
+                accountId,
+                accountId,
+                TransactionType.DEPOSIT,
+                amount
+        );
+    }
+
+    public static TransactionHistory withdraw(
+            Long accountId,
+            BigDecimal amount
+    ) {
+        return new TransactionHistory(
+                accountId,
+                accountId,
+                TransactionType.WITHDRAW,
+                amount
+        );
+    }
+
+    public static TransactionHistory transfer(
+            Long fromAccountId,
+            Long toAccountId,
+            BigDecimal amount
+    ) {
+        return new TransactionHistory(
+                fromAccountId,
+                toAccountId,
+                TransactionType.TRANSFER,
+                amount
+        );
+    }
 }
