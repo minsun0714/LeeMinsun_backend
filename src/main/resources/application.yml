@@ -1,3 +1,5 @@
 spring:
   application:
     name: codingtest
+  jackson:
+    time-zone: UTC
