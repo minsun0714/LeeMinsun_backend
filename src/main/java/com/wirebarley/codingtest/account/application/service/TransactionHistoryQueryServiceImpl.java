@@ -23,9 +23,16 @@ public class TransactionHistoryQueryServiceImpl implements TransactionHistoryQue
 
     @Override
     public SendHistoryResponseDto findSendHistory(Long accountId, int page, int size) {
-        page = Math.max(page - 1, 0);
+        int adjustedPage = Math.max(page - 1, 0);
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(adjustedPage, size);
+
+        log.info(
+                "[SendHistoryQuery] accountId={}, page={}, size={}",
+                accountId,
+                page,
+                size
+        );
 
         Page<TransactionHistory> result =
                 transactionHistoryRepository
@@ -35,6 +42,15 @@ public class TransactionHistoryQueryServiceImpl implements TransactionHistoryQue
                                 pageable
                         );
 
+        if (log.isDebugEnabled()) {
+            log.debug(
+                    "[SendHistoryResult] accountId={}, totalElements={}, totalPages={}",
+                    accountId,
+                    result.getTotalElements(),
+                    result.getTotalPages()
+            );
+        }
+
         return SendHistoryResponseDto.from(
                 accountId,
                 result
@@ -43,9 +59,16 @@ public class TransactionHistoryQueryServiceImpl implements TransactionHistoryQue
 
     @Override
     public ReceiveHistoryResponseDto findReceiveHistory(Long accountId, int page, int size) {
-        page = Math.max(page - 1, 0);
+        int adjustedPage = Math.max(page - 1, 0);
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(adjustedPage, size);
+
+        log.info(
+                "[ReceiveHistoryQuery] accountId={}, page={}, size={}",
+                accountId,
+                page,
+                size
+        );
 
         Page<TransactionHistory> result =
                 transactionHistoryRepository
@@ -54,6 +77,15 @@ public class TransactionHistoryQueryServiceImpl implements TransactionHistoryQue
                                 TransactionType.TRANSFER,
                                 pageable
                         );
+
+        if (log.isDebugEnabled()) {
+            log.debug(
+                    "[ReceiveHistoryResult] accountId={}, totalElements={}, totalPages={}",
+                    accountId,
+                    result.getTotalElements(),
+                    result.getTotalPages()
+            );
+        }
 
         return ReceiveHistoryResponseDto.from(
                 accountId,
