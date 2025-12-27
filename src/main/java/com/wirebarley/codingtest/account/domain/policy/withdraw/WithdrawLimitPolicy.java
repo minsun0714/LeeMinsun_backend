@@ -1,11 +1,11 @@
-package com.wirebarley.codingtest.account.domain.policy;
+package com.wirebarley.codingtest.account.domain.policy.withdraw;
 
 import com.wirebarley.codingtest.account.domain.Account;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public interface WithdrawPolicy {
+public interface WithdrawLimitPolicy {
     /**
      * 출금 요청이 정책에 따라 허용 가능한지 검증한다.
      *

@@ -4,6 +4,7 @@ import com.wirebarley.codingtest.account.domain.Account;
 import com.wirebarley.codingtest.account.domain.TransactionType;
 import com.wirebarley.codingtest.account.domain.exception.WithdrawException;
 import com.wirebarley.codingtest.account.domain.exception.WithdrawExceptionMessage;
+import com.wirebarley.codingtest.account.domain.policy.withdraw.WithdrawPolicy;
 import com.wirebarley.codingtest.account.infrastructure.TransactionHistoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,12 +21,12 @@ import static org.mockito.BDDMockito.*;
 class DailyWithdrawLimitPolicyTest {
 
     private TransactionHistoryRepository transactionHistoryRepository;
-    private DailyWithdrawLimitPolicy policy;
+    private WithdrawPolicy policy;
 
     @BeforeEach
     void setUp() {
         transactionHistoryRepository = Mockito.mock(TransactionHistoryRepository.class);
-        policy = new DailyWithdrawLimitPolicy(transactionHistoryRepository);
+        policy = new WithdrawPolicy(transactionHistoryRepository);
     }
 
     private Account createAccount() {
@@ -38,7 +39,7 @@ class DailyWithdrawLimitPolicyTest {
         Account account = createAccount();
         LocalDate today = LocalDate.now();
 
-        given(transactionHistoryRepository.sumWithdrawAmountBetween(
+        given(transactionHistoryRepository.sumTransactionAmountBetweenByTransactionType(
                 eq(account.getId()),
                 eq(TransactionType.WITHDRAW),
                 any(),
@@ -54,7 +55,7 @@ class DailyWithdrawLimitPolicyTest {
         Account account = createAccount();
         LocalDate today = LocalDate.now();
 
-        given(transactionHistoryRepository.sumWithdrawAmountBetween(
+        given(transactionHistoryRepository.sumTransactionAmountBetweenByTransactionType(
                 eq(account.getId()),
                 eq(TransactionType.WITHDRAW),
                 any(),
@@ -70,7 +71,7 @@ class DailyWithdrawLimitPolicyTest {
         Account account = createAccount();
         LocalDate today = LocalDate.now();
 
-        given(transactionHistoryRepository.sumWithdrawAmountBetween(
+        given(transactionHistoryRepository.sumTransactionAmountBetweenByTransactionType(
                 eq(account.getId()),
                 eq(TransactionType.WITHDRAW),
                 any(),
