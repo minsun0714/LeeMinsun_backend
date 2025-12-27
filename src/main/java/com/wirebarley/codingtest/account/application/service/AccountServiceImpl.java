@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +38,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountCloseResponseDto close(AccountCloseDto accountCloseDto) {
-        Account account = accountRepository.findById(accountCloseDto.accountId())
+        Account account = accountRepository.findByIdForUpdate(accountCloseDto.accountId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 계좌가 존재하지 않습니다."));
 
         account.close();
@@ -46,7 +48,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public DepositResponseDto deposit(DepositDto depositDto) {
-        Account account = accountRepository.findById(depositDto.accountId())
+        Account account = accountRepository.findByIdForUpdate(depositDto.accountId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 계좌가 존재하지 않습니다."));
 
         account.deposit(depositDto.amount());
@@ -56,7 +58,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public WithdrawResponseDto withdraw(WithdrawDto withdrawDto) {
-        Account account = accountRepository.findById(withdrawDto.accountId())
+        Account account = accountRepository.findByIdForUpdate(withdrawDto.accountId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 계좌가 존재하지 않습니다."));
 
         withdrawLimitPolicy.validate(account, withdrawDto.amount(), LocalDate.now());
@@ -68,13 +70,25 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public TransferResponseDto transfer(TransferDto transferDto) {
-        Account fromAccount = accountRepository.findById(transferDto.fromAccountId())
-                .orElseThrow(() -> new EntityNotFoundException("송금자의 계좌가 존재하지 않습니다."));
-        Account toAccount = accountRepository.findById(transferDto.toAccountId())
-                .orElseThrow(() -> new EntityNotFoundException("수취자의 계좌가 존재하지 않습니다."));
+        List<Long> accountIds = Stream.of(
+                transferDto.fromAccountId(),
+                transferDto.toAccountId()
+        ).sorted().toList();
 
-        TransferPolicy.TransferContext transferCtx
-                = transferLimitPolicy.prepare(fromAccount, transferDto.amount(), LocalDate.now());
+        List<Account> accounts = accountRepository.findAllByIdForUpdate(accountIds);
+
+        Account fromAccount = accounts.stream()
+                .filter(a -> a.getId().equals(transferDto.fromAccountId()))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("송금자 계좌가 존재하지 않습니다."));
+
+        Account toAccount = accounts.stream()
+                .filter(a -> a.getId().equals(transferDto.toAccountId()))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("수취자 계좌가 존재하지 않습니다."));
+
+        TransferPolicy.TransferContext transferCtx =
+                transferLimitPolicy.prepare(fromAccount, transferDto.amount(), LocalDate.now());
 
         fromAccount.withdraw(transferCtx.totalWithdrawAmount());
         toAccount.deposit(transferDto.amount());
