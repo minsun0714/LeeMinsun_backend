@@ -19,7 +19,7 @@ public interface TransactionHistoryRepository extends JpaRepository<TransactionH
           and th.createdAt >= :start
           and th.createdAt < :end
     """)
-    BigDecimal sumWithdrawAmountBetween(
+    BigDecimal sumTransactionAmountBetweenByTransactionType(
             @Param("accountId") Long accountId,
             @Param("type") TransactionType type,
             @Param("start") ZonedDateTime start,
