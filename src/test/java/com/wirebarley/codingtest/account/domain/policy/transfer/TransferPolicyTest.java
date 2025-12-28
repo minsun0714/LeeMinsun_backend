@@ -14,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -41,8 +41,8 @@ class TransferPolicyTest {
                 .sumTransactionAmountBetweenByTransactionType(
                         any(),
                         eq(TransactionType.TRANSFER),
-                        any(ZonedDateTime.class),
-                        any(ZonedDateTime.class)
+                        any(OffsetDateTime.class),
+                        any(OffsetDateTime.class)
                 ))
                 .thenReturn(BigDecimal.ZERO);
 
@@ -68,8 +68,8 @@ class TransferPolicyTest {
                 .sumTransactionAmountBetweenByTransactionType(
                         any(),
                         eq(TransactionType.TRANSFER),
-                        any(ZonedDateTime.class),
-                        any(ZonedDateTime.class)
+                        any(OffsetDateTime.class),
+                        any(OffsetDateTime.class)
                 ))
                 .thenReturn(BigDecimal.valueOf(2_500_000));
 
@@ -94,8 +94,8 @@ class TransferPolicyTest {
                 .sumTransactionAmountBetweenByTransactionType(
                         any(),
                         eq(TransactionType.TRANSFER),
-                        any(ZonedDateTime.class),
-                        any(ZonedDateTime.class)
+                        any(OffsetDateTime.class),
+                        any(OffsetDateTime.class)
                 ))
                 .thenReturn(null);
 

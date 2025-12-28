@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -26,13 +27,16 @@ public class TransferPolicy implements TransferLimitPolicy, FeePolicy {
     @Override
     public TransferContext prepare(Account fromAccount, BigDecimal amount, LocalDate today) {
         BigDecimal transferFee = calculateFee(amount);
-        validate(fromAccount, amount.add(transferFee), today);
+        validate(fromAccount, amount, today);
         return new TransferContext(transferFee, amount.add(transferFee));
     }
 
     private void validate(Account fromAccount, BigDecimal amount, LocalDate today){
-        ZonedDateTime start = today.atStartOfDay(ZoneId.of(ZONE_ID));
-        ZonedDateTime end = start.plusDays(1);
+        ZonedDateTime startOfDayKst = today.atStartOfDay(ZoneId.of(ZONE_ID));
+        ZonedDateTime endOfDayKst = startOfDayKst.plusDays(1);
+
+        OffsetDateTime start = startOfDayKst.toOffsetDateTime();
+        OffsetDateTime end = endOfDayKst.toOffsetDateTime();
 
         BigDecimal todayTotalTransferAmount =
                 transactionHistoryRepository

@@ -14,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -41,8 +41,8 @@ class WithdrawPolicyTest {
                 .sumTransactionAmountBetweenByTransactionType(
                         any(),
                         eq(TransactionType.WITHDRAW),
-                        any(ZonedDateTime.class),
-                        any(ZonedDateTime.class)
+                        any(OffsetDateTime.class),
+                        any(OffsetDateTime.class)
                 ))
                 .thenReturn(BigDecimal.valueOf(600_000));
 
@@ -64,8 +64,8 @@ class WithdrawPolicyTest {
                 .sumTransactionAmountBetweenByTransactionType(
                         any(),
                         eq(TransactionType.WITHDRAW),
-                        any(ZonedDateTime.class),
-                        any(ZonedDateTime.class)
+                        any(OffsetDateTime.class),
+                        any(OffsetDateTime.class)
                 ))
                 .thenReturn(BigDecimal.valueOf(700_000));
 
@@ -90,8 +90,8 @@ class WithdrawPolicyTest {
                 .sumTransactionAmountBetweenByTransactionType(
                         any(),
                         eq(TransactionType.WITHDRAW),
-                        any(ZonedDateTime.class),
-                        any(ZonedDateTime.class)
+                        any(OffsetDateTime.class),
+                        any(OffsetDateTime.class)
                 ))
                 .thenReturn(null);
 

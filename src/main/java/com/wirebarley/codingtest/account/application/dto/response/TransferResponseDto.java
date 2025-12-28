@@ -11,8 +11,7 @@ public record TransferResponseDto(
         Long toAccountId,
         BigDecimal transferAmount,
         BigDecimal fee,
-        BigDecimal fromAccountBalance,
-        BigDecimal toAccountBalance
+        BigDecimal fromAccountBalance
 ) {
     public static TransferResponseDto from(Account fromAccount, Account toAccount, TransferPolicy.TransferContext transferCtx, TransferDto transferDto){
         return new TransferResponseDto(
@@ -20,8 +19,7 @@ public record TransferResponseDto(
                 toAccount.getId(),
                 transferDto.amount(),
                 transferCtx.fee(),
-                fromAccount.getBalance(),
-                toAccount.getBalance()
+                fromAccount.getBalance()
         );
     }
 }
