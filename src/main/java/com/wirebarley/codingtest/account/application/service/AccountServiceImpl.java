@@ -164,7 +164,7 @@ public class AccountServiceImpl implements AccountService {
                 transferDto.amount()
         );
 
-        return TransferResponseDto.from(fromAccount, toAccount, transferCtx);
+        return TransferResponseDto.from(fromAccount, toAccount, transferCtx, transferDto);
     }
 }
 
