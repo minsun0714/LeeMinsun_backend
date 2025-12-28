@@ -20,6 +20,19 @@ include::{snippets}/account-create/http-response.adoc[]
 ==== 응답 필드
 include::{snippets}/account-create/response-fields.adoc[]
 
+=== 계좌 해지
+
+==== HTTP 요청
+include::{snippets}/account-close/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/account-close/request-fields.adoc[]
+
+==== HTTP 응답
+include::{snippets}/account-close/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/account-close/response-fields.adoc[]
 
 === 입금
 
