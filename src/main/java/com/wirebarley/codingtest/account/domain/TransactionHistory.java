@@ -10,7 +10,14 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Entity
-@Table(name = "transaction_histories")
+@Table(
+        name = "transaction_histories",
+        indexes = {
+                @Index(name = "idx_tx_account_id", columnList = "account_id"),
+                @Index(name = "idx_tx_counterparty_id", columnList = "counterparty_id"),
+                @Index(name = "idx_tx_account_created_at", columnList = "account_id, created_at")
+        }
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TransactionHistory {
