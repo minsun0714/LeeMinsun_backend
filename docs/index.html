@@ -557,26 +557,34 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_계좌_생성">1.1. 계좌 생성</a>
 <ul class="sectlevel3">
-<li><a href="#_요청">1.1.1. 요청</a></li>
-<li><a href="#_응답">1.1.2. 응답</a></li>
+<li><a href="#_http_요청">1.1.1. HTTP 요청</a></li>
+<li><a href="#_요청_필드">1.1.2. 요청 필드</a></li>
+<li><a href="#_http_응답">1.1.3. HTTP 응답</a></li>
+<li><a href="#_응답_필드">1.1.4. 응답 필드</a></li>
 </ul>
 </li>
 <li><a href="#_입금">1.2. 입금</a>
 <ul class="sectlevel3">
-<li><a href="#_요청_2">1.2.1. 요청</a></li>
-<li><a href="#_응답_2">1.2.2. 응답</a></li>
+<li><a href="#_http_요청_2">1.2.1. HTTP 요청</a></li>
+<li><a href="#_요청_필드_2">1.2.2. 요청 필드</a></li>
+<li><a href="#_http_응답_2">1.2.3. HTTP 응답</a></li>
+<li><a href="#_응답_필드_2">1.2.4. 응답 필드</a></li>
 </ul>
 </li>
 <li><a href="#_출금">1.3. 출금</a>
 <ul class="sectlevel3">
-<li><a href="#_요청_3">1.3.1. 요청</a></li>
-<li><a href="#_응답_3">1.3.2. 응답</a></li>
+<li><a href="#_http_요청_3">1.3.1. HTTP 요청</a></li>
+<li><a href="#_요청_필드_3">1.3.2. 요청 필드</a></li>
+<li><a href="#_http_응답_3">1.3.3. HTTP 응답</a></li>
+<li><a href="#_응답_필드_3">1.3.4. 응답 필드</a></li>
 </ul>
 </li>
 <li><a href="#_이체">1.4. 이체</a>
 <ul class="sectlevel3">
-<li><a href="#_요청_4">1.4.1. 요청</a></li>
-<li><a href="#_응답_4">1.4.2. 응답</a></li>
+<li><a href="#_http_요청_4">1.4.1. HTTP 요청</a></li>
+<li><a href="#_요청_필드_4">1.4.2. 요청 필드</a></li>
+<li><a href="#_http_응답_4">1.4.3. HTTP 응답</a></li>
+<li><a href="#_응답_필드_4">1.4.4. 응답 필드</a></li>
 </ul>
 </li>
 </ul>
@@ -585,13 +593,20 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_송금_내역_조회">2.1. 송금 내역 조회</a>
 <ul class="sectlevel3">
-<li><a href="#_요청_파라미터">2.1.1. 요청 파라미터</a></li>
-<li><a href="#_응답_5">2.1.2. 응답</a></li>
+<li><a href="#_http_요청_5">2.1.1. HTTP 요청</a></li>
+<li><a href="#_요청_파라미터">2.1.2. 요청 파라미터</a></li>
+<li><a href="#_http_응답_5">2.1.3. HTTP 응답</a></li>
+<li><a href="#_응답_필드_5">2.1.4. 응답 필드</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#_공통_에러_응답">3. 공통 에러 응답</a></li>
+<li><a href="#_공통_에러_응답">3. 공통 에러 응답</a>
+<ul class="sectlevel3">
+<li><a href="#_http_응답_6">3.1. HTTP 응답</a></li>
+<li><a href="#_응답_필드_6">3.2. 응답 필드</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -602,7 +617,23 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_계좌_생성">1.1. 계좌 생성</h3>
 <div class="sect3">
-<h4 id="_요청">1.1.1. 요청</h4>
+<h4 id="_http_요청">1.1.1. HTTP 요청</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /accounts HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 60
+Host: localhost:8080
+
+{
+  "accountNumber": "111-111",
+  "initialAmount": 100000
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_필드">1.1.2. 요청 필드</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -631,7 +662,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답">1.1.2. 응답</h4>
+<h4 id="_http_응답">1.1.3. HTTP 응답</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 76
+
+{"accountId":9,"accountNumber":"111-111","balance":100000,"status":"ACTIVE"}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드">1.1.4. 응답 필드</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -673,7 +716,23 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_입금">1.2. 입금</h3>
 <div class="sect3">
-<h4 id="_요청_2">1.2.1. 요청</h4>
+<h4 id="_http_요청_2">1.2.1. HTTP 요청</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /accounts/deposit HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 42
+Host: localhost:8080
+
+{
+  "accountId" : 10,
+  "amount": 50000
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_필드_2">1.2.2. 요청 필드</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -702,7 +761,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_2">1.2.2. 응답</h4>
+<h4 id="_http_응답_2">1.2.3. HTTP 응답</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 33
+
+{"accountId":10,"balance":150000}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_2">1.2.4. 응답 필드</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -734,7 +805,23 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_출금">1.3. 출금</h3>
 <div class="sect3">
-<h4 id="_요청_3">1.3.1. 요청</h4>
+<h4 id="_http_요청_3">1.3.1. HTTP 요청</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /accounts/withdraw HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 41
+Host: localhost:8080
+
+{
+  "accountId" : 8,
+  "amount": 50000
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_필드_3">1.3.2. 요청 필드</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -763,7 +850,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_3">1.3.2. 응답</h4>
+<h4 id="_http_응답_3">1.3.3. HTTP 응답</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 32
+
+{"accountId":8,"balance":150000}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_3">1.3.4. 응답 필드</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -795,7 +894,24 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_이체">1.4. 이체</h3>
 <div class="sect3">
-<h4 id="_요청_4">1.4.1. 요청</h4>
+<h4 id="_http_요청_4">1.4.1. HTTP 요청</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /accounts/transfer HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 65
+Host: localhost:8080
+
+{
+  "fromAccountId": 3,
+  "toAccountId": 4,
+  "amount": 200000
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_필드_4">1.4.2. 요청 필드</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -829,7 +945,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_4">1.4.2. 응답</h4>
+<h4 id="_http_응답_4">1.4.3. HTTP 응답</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 104
+
+{"fromAccountId":3,"toAccountId":4,"transferAmount":200000,"fee":2000.00,"fromAccountBalance":798000.00}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_4">1.4.4. 응답 필드</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -881,7 +1009,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_송금_내역_조회">2.1. 송금 내역 조회</h3>
 <div class="sect3">
-<h4 id="_요청_파라미터">2.1.1. 요청 파라미터</h4>
+<h4 id="_http_요청_5">2.1.1. HTTP 요청</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /accounts/1/histories/send?page=1&amp;size=10 HTTP/1.1
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_파라미터">2.1.2. 요청 파라미터</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -906,7 +1043,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </table>
 </div>
 <div class="sect3">
-<h4 id="_응답_5">2.1.2. 응답</h4>
+<h4 id="_http_응답_5">2.1.3. HTTP 응답</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 368
+
+{"accountId":1,"histories":[{"transactionId":11,"accountId":1,"counterpartyId":3,"type":"TRANSFER","amount":20000,"createdAt":"2025-12-28T05:31:27.834025Z"},{"transactionId":10,"accountId":1,"counterpartyId":2,"type":"TRANSFER","amount":10000,"createdAt":"2025-12-28T05:31:27.832858Z"}],"pageMeta":{"page":0,"size":10,"totalElements":2,"totalPages":1,"hasNext":false}}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_5">2.1.4. 응답 필드</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1000,7 +1149,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="title">Note</div>
 </td>
 <td class="content">
-본 API는 계좌 간 이체(송금/수취) 내역만 반환하며,
+본 API는 계좌 간 이체(송금/수취) 내역만 반환하며
 입금 및 출금 내역은 포함하지 않습니다.
 </td>
 </tr>
@@ -1013,6 +1162,20 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1">
 <h2 id="_공통_에러_응답">3. 공통 에러 응답</h2>
 <div class="sectionbody">
+<div class="sect3">
+<h4 id="_http_응답_6">3.1. HTTP 응답</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Content-Length: 82
+
+{"code":"INVALID_REQUEST","message":"요청 형식이 올바르지 않습니다."}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_응답_필드_6">3.2. 응답 필드</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1046,7 +1209,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="title">Note</div>
 </td>
 <td class="content">
-모든 에러 응답은 동일한 JSON 구조를 가지며,
+모든 에러 응답은 동일한 JSON 구조를 가지며
 HTTP 상태 코드와 message 값만 상황에 따라 달라집니다.
 </td>
 </tr>
@@ -1055,9 +1218,10 @@ HTTP 상태 코드와 message 값만 상황에 따라 달라집니다.
 </div>
 </div>
 </div>
+</div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-12-28 14:19:47 +0900
+Last updated 2025-12-28 16:38:56 +0900
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
