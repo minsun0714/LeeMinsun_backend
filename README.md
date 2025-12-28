@@ -46,6 +46,10 @@ MYSQL_USERNAME=your_username
 MYSQL_DATABASE=your_database
 ```
 3) DB에 `MYSQL_DATABASE`로 지정한 데이터베이스를 생성합니다.
+```
+docker exec -it transfer-mysql mysql -u root -p
+USE [데이터베이스명]; 
+```
 
 4) 아래 명령어로 빌드 및 실행합니다.
 ```
