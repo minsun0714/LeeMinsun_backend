@@ -22,8 +22,11 @@ public class WithdrawPolicy implements WithdrawLimitPolicy {
 
     @Override
     public void validate(Account account, BigDecimal amount, LocalDate today) {
-        ZonedDateTime start = today.atStartOfDay(ZoneId.of(ZONE_ID));
-        ZonedDateTime end = start.plusDays(1);
+        ZonedDateTime startOfDayKst = today.atStartOfDay(ZoneId.of(ZONE_ID));
+        ZonedDateTime endOfDayKst = startOfDayKst.plusDays(1);
+
+        OffsetDateTime start = startOfDayKst.toOffsetDateTime();
+        OffsetDateTime end = endOfDayKst.toOffsetDateTime();
 
         BigDecimal todayTotalWithdrawAmount =
                 transactionHistoryRepository.sumTransactionAmountBetweenByTransactionType(account.getId(), TransactionType.WITHDRAW, start, end);

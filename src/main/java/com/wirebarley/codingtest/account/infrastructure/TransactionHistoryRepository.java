@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 public interface TransactionHistoryRepository extends JpaRepository<TransactionHistory, Long> {
 
@@ -24,8 +24,8 @@ public interface TransactionHistoryRepository extends JpaRepository<TransactionH
     BigDecimal sumTransactionAmountBetweenByTransactionType(
             @Param("accountId") Long accountId,
             @Param("type") TransactionType type,
-            @Param("start") ZonedDateTime start,
-            @Param("end") ZonedDateTime end
+            @Param("start") OffsetDateTime start,
+            @Param("end") OffsetDateTime end
     );
 
     Page<TransactionHistory> findByAccountIdAndTypeOrderByCreatedAtDesc(
