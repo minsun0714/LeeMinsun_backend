@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -107,6 +108,54 @@ class TransactionHistoryControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.histories.length()").value(5));
+    }
+
+    @Test
+    @DisplayName("수신 내역 조회 - 정상")
+    void findReceiveHistory_success() throws Exception {
+        // given
+        Long accountId = 1L;
+
+        transfer(2L, accountId, BigDecimal.valueOf(10000));
+        transfer(3L, accountId, BigDecimal.valueOf(20000));
+
+        // when & then
+        mockMvc.perform(
+                        get("/accounts/{accountId}/histories/receive", accountId)
+                                .param("page", "1")
+                                .param("size", "10")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accountId").value(accountId))
+                .andExpect(jsonPath("$.histories.length()").value(2))
+                .andExpect(jsonPath("$.histories[0].type").value("TRANSFER"))
+                .andDo(document("transaction-receive-history",
+                        pathParameters(
+                                parameterWithName("accountId").description("계좌 ID")
+                        ),
+                        queryParameters(
+                                parameterWithName("page").description("페이지 번호 (1부터 시작)"),
+                                parameterWithName("size").description("페이지 크기")
+                        ),
+                        responseFields(
+                                fieldWithPath("accountId").description("계좌 ID"),
+                                fieldWithPath("histories").description("수신 내역 목록"),
+
+                                fieldWithPath("histories[].transactionId").description("거래 내역 ID"),
+                                fieldWithPath("histories[].accountId").description("당사자 계좌 ID"),
+                                fieldWithPath("histories[].type").description("거래 타입 (TRANSFER)"),
+                                fieldWithPath("histories[].amount").description("송금 금액"),
+                                fieldWithPath("histories[].counterpartyId").description("상대 계좌 ID"),
+                                fieldWithPath("histories[].createdAt").description("거래 시각"),
+
+                                fieldWithPath("pageMeta").description("페이지 정보"),
+                                fieldWithPath("pageMeta.page").description("현재 페이지 번호"),
+                                fieldWithPath("pageMeta.size").description("페이지 크기"),
+                                fieldWithPath("pageMeta.totalElements").description("전체 데이터 수"),
+                                fieldWithPath("pageMeta.totalPages").description("전체 페이지 수"),
+                                fieldWithPath("pageMeta.hasNext").description("다음 페이지 존재 여부")
+                        )
+                ));
     }
 
     private void transfer(
