@@ -19,4 +19,18 @@ public record ErrorResponse(
                 "서버 오류가 발생했습니다."
         );
     }
+
+    public static ErrorResponse notReadable(){
+        return new ErrorResponse(
+                "INVALID_REQUEST",
+                "요청 메시지 형식이 잘못되었습니다."
+        );
+    }
+
+    public static ErrorResponse validate(){
+        return new ErrorResponse(
+                "INVALID_REQUEST",
+                "요청 형식이 올바르지 않습니다."
+        );
+    }
 }
