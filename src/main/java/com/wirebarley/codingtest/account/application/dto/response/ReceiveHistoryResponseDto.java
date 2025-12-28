@@ -6,13 +6,13 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public record ReceiveHistoryResponseDto(
-        Long counterpartyId,
+        Long accountId,
         List<TransactionHistoryResponseDto> histories,
         PageMeta pageMeta
 ) {
 
     public static ReceiveHistoryResponseDto from(
-            Long counterpartyId,
+            Long accountId,
             Page<TransactionHistory> page
     ) {
         List<TransactionHistoryResponseDto> histories =
@@ -21,7 +21,7 @@ public record ReceiveHistoryResponseDto(
                         .toList();
 
         return new ReceiveHistoryResponseDto(
-                counterpartyId,
+                accountId,
                 histories,
                 PageMeta.from(page)
         );

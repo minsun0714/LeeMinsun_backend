@@ -86,7 +86,7 @@ class TransactionHistoryQueryServiceImplTest {
                 service.findReceiveHistory(counterpartyId, page, size);
 
         // then
-        assertThat(response.counterpartyId()).isEqualTo(counterpartyId);
+        assertThat(response.accountId()).isEqualTo(counterpartyId);
         assertThat(response.histories()).hasSize(1);
         assertThat(response.pageMeta().totalElements()).isEqualTo(1);
 
