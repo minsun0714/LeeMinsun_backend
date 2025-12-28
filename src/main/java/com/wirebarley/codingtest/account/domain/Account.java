@@ -1,5 +1,7 @@
 package com.wirebarley.codingtest.account.domain;
 
+import com.wirebarley.codingtest.account.domain.exception.AccountException;
+import com.wirebarley.codingtest.account.domain.exception.AccountExceptionMessage;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -9,8 +11,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-
-import static org.springframework.util.Assert.state;
 
 @Entity
 @Table(name = "accounts")
@@ -44,7 +44,7 @@ public class Account {
             String accountNumber,
             BigDecimal initialBalance
     ) {
-        validate(accountNumber, initialBalance);
+        validateCreatable(accountNumber, initialBalance);
 
         Account account = new Account();
 
@@ -55,10 +55,13 @@ public class Account {
         return account;
     }
 
-    private static void validate(String accountNumber, BigDecimal initialBalance){
-        state(accountNumber != null && !accountNumber.isBlank(), "계좌번호는 필수입니다.");
-        state(initialBalance != null, "초기 잔액은 필수입니다.");
-        state(initialBalance.compareTo(BigDecimal.ZERO) >= 0, "초기 잔액은 음수가 될 수 없습니다.");
+    private static void validateCreatable(String accountNumber, BigDecimal initialBalance){
+        if (accountNumber == null || accountNumber.isBlank()){
+            throw new AccountException(AccountExceptionMessage.ACCOUNT_NUMBER_REQUIRED);
+        }
+        if (initialBalance == null || initialBalance.compareTo(BigDecimal.ZERO) < 0) {
+            throw new AccountException(AccountExceptionMessage.INVALID_INITIAL_BALANCE);
+        }
     }
 
     public void close() {
@@ -67,7 +70,9 @@ public class Account {
     }
 
     private void validateClosable() {
-        state(this.status == AccountStatus.ACTIVE, "이미 삭제된 계좌입니다.");
+        if (this.status == AccountStatus.CLOSED) {
+            throw new AccountException(AccountExceptionMessage.ACCOUNT_ALREADY_CLOSED);
+        }
     }
 
     public void deposit(BigDecimal amount) {
@@ -84,14 +89,20 @@ public class Account {
     }
 
     private void validateBalanceSufficient(BigDecimal amount) {
-        state(this.balance.compareTo(amount) >= 0, "잔액이 부족합니다.");
+        if (this.balance.compareTo(amount) < 0){
+            throw new AccountException(AccountExceptionMessage.INSUFFICIENT_BALANCE);
+        }
     }
 
     private void validateActive() {
-        state(this.status == AccountStatus.ACTIVE, "비활성 계좌입니다.");
+        if (this.status != AccountStatus.ACTIVE){
+            throw new AccountException(AccountExceptionMessage.ACCOUNT_INACTIVE);
+        }
     }
 
     private static void validateAmount(BigDecimal amount) {
-        state(amount != null && amount.compareTo(BigDecimal.ZERO) > 0, "입금 금액은 0보다 커야 합니다.");
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new AccountException(AccountExceptionMessage.INVALID_AMOUNT);
+        }
     }
 }

@@ -1,5 +1,7 @@
 package com.wirebarley.codingtest.account.domain;
 
+import com.wirebarley.codingtest.account.domain.exception.AccountException;
+import com.wirebarley.codingtest.account.domain.exception.AccountExceptionMessage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -28,8 +30,8 @@ class AccountTest {
     void createAccount_fail_whenNegativeBalance() {
         assertThatThrownBy(() ->
                 createAccount(new BigDecimal("-1"))
-        ).isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("초기 잔액은 음수가 될 수 없습니다");
+        ).isInstanceOf(AccountException.class)
+                .hasMessageContaining(AccountExceptionMessage.INVALID_INITIAL_BALANCE.getMessage());
     }
 
     @Test
@@ -49,8 +51,8 @@ class AccountTest {
 
         assertThatThrownBy(() ->
                 account.deposit(BigDecimal.ZERO)
-        ).isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("입금 금액은 0보다 커야 합니다");
+        ).isInstanceOf(AccountException.class)
+                .hasMessageContaining(AccountExceptionMessage.INVALID_AMOUNT.getMessage());
     }
 
     @Test
@@ -70,8 +72,8 @@ class AccountTest {
 
         assertThatThrownBy(() ->
                 account.withdraw(new BigDecimal("20000"))
-        ).isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("잔액이 부족합니다");
+        ).isInstanceOf(AccountException.class)
+                .hasMessageContaining(AccountExceptionMessage.INSUFFICIENT_BALANCE.getMessage());
     }
 
     @Test
@@ -82,8 +84,8 @@ class AccountTest {
 
         assertThatThrownBy(() ->
                 account.deposit(new BigDecimal("1000"))
-        ).isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("비활성 계좌입니다");
+        ).isInstanceOf(AccountException.class)
+                .hasMessageContaining(AccountExceptionMessage.ACCOUNT_INACTIVE.getMessage());
     }
 
     @Test
@@ -94,8 +96,8 @@ class AccountTest {
 
         assertThatThrownBy(() ->
                 account.withdraw(new BigDecimal("1000"))
-        ).isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("비활성 계좌입니다");
+        ).isInstanceOf(AccountException.class)
+                .hasMessageContaining(AccountExceptionMessage.ACCOUNT_INACTIVE.getMessage());
     }
 
     @Test
@@ -105,7 +107,7 @@ class AccountTest {
         account.close();
 
         assertThatThrownBy(account::close)
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("이미 삭제된 계좌입니다");
+                .isInstanceOf(AccountException.class)
+                .hasMessageContaining(AccountExceptionMessage.ACCOUNT_ALREADY_CLOSED.getMessage());
     }
 }
