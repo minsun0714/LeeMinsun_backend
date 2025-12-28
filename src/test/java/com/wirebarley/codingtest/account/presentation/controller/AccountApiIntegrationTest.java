@@ -2,6 +2,7 @@ package com.wirebarley.codingtest.account.presentation.controller;
 
 
 import com.wirebarley.codingtest.account.domain.Account;
+import com.wirebarley.codingtest.account.domain.AccountStatus;
 import com.wirebarley.codingtest.account.domain.exception.TransferExceptionMessage;
 import com.wirebarley.codingtest.account.domain.exception.WithdrawExceptionMessage;
 import com.wirebarley.codingtest.account.infrastructure.AccountRepository;
@@ -17,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -89,6 +90,37 @@ class AccountApiIntegrationTest {
                         )
                 ));
     }
+
+    @Test
+    @DisplayName("계좌를 해지하면 정상적으로 해지된다")
+    void closeAccount_success() throws Exception {
+        // given
+        Long accountId = createAccount(100_000);
+
+        String request = """
+                {
+                  "accountId": %d
+                }
+                """.formatted(accountId);
+
+        // when & then
+        mockMvc.perform(delete("/accounts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accountId").value(accountId))
+                .andExpect(jsonPath("$.status").value(AccountStatus.CLOSED.name()))
+                .andDo(document("account-close",
+                        requestFields(
+                                fieldWithPath("accountId").description("계좌 Id")
+                        ),
+                        responseFields(
+                                fieldWithPath("accountId").description("계좌 ID"),
+                                fieldWithPath("status").description("계좌 상태")
+                        )
+                ));
+    }
+
 
     @Test
     @DisplayName("입금하면 잔액이 증가한다")

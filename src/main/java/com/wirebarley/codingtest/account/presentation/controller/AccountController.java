@@ -23,7 +23,7 @@ public class AccountController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/close")
+    @DeleteMapping
     public ResponseEntity<AccountCloseResponseDto> close(
             @Valid @RequestBody AccountCloseDto request
     ) {
