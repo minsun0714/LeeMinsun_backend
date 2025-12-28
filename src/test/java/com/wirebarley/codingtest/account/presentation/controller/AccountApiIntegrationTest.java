@@ -8,6 +8,7 @@ import com.wirebarley.codingtest.account.infrastructure.AccountRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -20,8 +21,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureRestDocs
 @Transactional
 class AccountApiIntegrationTest {
 
@@ -48,7 +53,19 @@ class AccountApiIntegrationTest {
                         .content(request))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accountNumber").value("111-111"))
-                .andExpect(jsonPath("$.balance").value(100000));
+                .andExpect(jsonPath("$.balance").value(100000))
+                .andDo(document("account-create",
+                        requestFields(
+                                fieldWithPath("accountNumber").description("계좌 번호"),
+                                fieldWithPath("initialAmount").description("초기 잔액")
+                        ),
+                        responseFields(
+                                fieldWithPath("accountId").description("계좌 ID"),
+                                fieldWithPath("accountNumber").description("계좌 번호"),
+                                fieldWithPath("balance").description("현재 잔액"),
+                                fieldWithPath("status").description("현재 계좌 상태")
+                        )
+                ));
     }
 
     @Test
@@ -64,7 +81,13 @@ class AccountApiIntegrationTest {
         mockMvc.perform(post("/accounts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andDo(document("error-invalid-request",
+                        responseFields(
+                                fieldWithPath("code").description("상태 코드"),
+                                fieldWithPath("message").description("에러 메시지")
+                        )
+                ));
     }
 
     @Test
@@ -83,7 +106,17 @@ class AccountApiIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.balance").value(150000));
+                .andExpect(jsonPath("$.balance").value(150000))
+                .andDo(document("account-deposit",
+                            requestFields(
+                                    fieldWithPath("accountId").description("계좌 ID"),
+                                    fieldWithPath("amount").description("입금 금액")
+                            ),
+                            responseFields(
+                                    fieldWithPath("accountId").description("계좌 ID"),
+                                    fieldWithPath("balance").description("입금 후 잔액")
+                            )
+                        ));
     }
 
     @Test
@@ -102,7 +135,17 @@ class AccountApiIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.balance").value(150000));
+                .andExpect(jsonPath("$.balance").value(150000))
+                .andDo(document("account-withdraw",
+                        requestFields(
+                                fieldWithPath("accountId").description("계좌 ID"),
+                                fieldWithPath("amount").description("출금 금액")
+                        ),
+                        responseFields(
+                                fieldWithPath("accountId").description("계좌 ID"),
+                                fieldWithPath("balance").description("출금 후 잔액")
+                        )
+                ));
     }
 
     @Test
@@ -217,7 +260,21 @@ class AccountApiIntegrationTest {
         mockMvc.perform(post("/accounts/transfer")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(document("account-transfer",
+                        requestFields(
+                                fieldWithPath("fromAccountId").description("송신자 계좌 ID"),
+                                fieldWithPath("toAccountId").description("수신자 계좌 ID"),
+                                fieldWithPath("amount").description("송금 금액")
+                        ),
+                        responseFields(
+                                fieldWithPath("fromAccountId").description("송신자 계좌 ID"),
+                                fieldWithPath("toAccountId").description("수신자 계좌 ID"),
+                                fieldWithPath("transferAmount").description("송금 금액"),
+                                fieldWithPath("fee").description("송금 수수료"),
+                                fieldWithPath("fromAccountBalance").description("송금 후 잔액")
+                        )
+                ));
     }
 
     @Test
