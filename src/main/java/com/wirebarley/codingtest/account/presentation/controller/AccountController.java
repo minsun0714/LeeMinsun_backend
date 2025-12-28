@@ -3,6 +3,7 @@ package com.wirebarley.codingtest.account.presentation.controller;
 import com.wirebarley.codingtest.account.application.dto.request.*;
 import com.wirebarley.codingtest.account.application.dto.response.*;
 import com.wirebarley.codingtest.account.application.service.AccountService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ public class AccountController {
 
     @PostMapping
     public ResponseEntity<AccountCreateResponseDto> create(
-            @RequestBody AccountCreateDto request
+            @Valid @RequestBody AccountCreateDto request
     ) {
         AccountCreateResponseDto response = accountService.create(request);
         return ResponseEntity.ok(response);
@@ -24,7 +25,7 @@ public class AccountController {
 
     @PostMapping("/close")
     public ResponseEntity<AccountCloseResponseDto> close(
-            @RequestBody AccountCloseDto request
+            @Valid @RequestBody AccountCloseDto request
     ) {
         AccountCloseResponseDto response = accountService.close(request);
         return ResponseEntity.ok(response);
@@ -32,7 +33,7 @@ public class AccountController {
 
     @PostMapping("/deposit")
     public ResponseEntity<DepositResponseDto> deposit(
-            @RequestBody DepositDto request
+            @Valid @RequestBody DepositDto request
     ) {
         DepositResponseDto response = accountService.deposit(request);
         return ResponseEntity.ok(response);
@@ -40,7 +41,7 @@ public class AccountController {
 
     @PostMapping("/withdraw")
     public ResponseEntity<WithdrawResponseDto> withdraw(
-            @RequestBody WithdrawDto request
+            @Valid @RequestBody WithdrawDto request
     ) {
         WithdrawResponseDto response = accountService.withdraw(request);
         return ResponseEntity.ok(response);
@@ -48,7 +49,7 @@ public class AccountController {
 
     @PostMapping("/transfer")
     public ResponseEntity<TransferResponseDto> transfer(
-            @RequestBody TransferDto request
+            @Valid @RequestBody TransferDto request
     ) {
         TransferResponseDto response = accountService.transfer(request);
         return ResponseEntity.ok(response);
