@@ -16,12 +16,13 @@ import java.time.*;
 public class WithdrawPolicy implements WithdrawLimitPolicy {
 
     private static final BigDecimal DAILY_LIMIT = BigDecimal.valueOf(1_000_000);
+    private static final String ZONE_ID = "Asia/Seoul";
 
     private final TransactionHistoryRepository transactionHistoryRepository;
 
     @Override
     public void validate(Account account, BigDecimal amount, LocalDate today) {
-        ZonedDateTime start = today.atStartOfDay(ZoneId.of("Asia/Seoul"));
+        ZonedDateTime start = today.atStartOfDay(ZoneId.of(ZONE_ID));
         ZonedDateTime end = start.plusDays(1);
 
         BigDecimal todayTotalWithdrawAmount =

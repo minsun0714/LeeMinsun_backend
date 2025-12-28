@@ -19,6 +19,7 @@ public class TransferPolicy implements TransferLimitPolicy, FeePolicy {
 
     private static final BigDecimal DAILY_LIMIT = BigDecimal.valueOf(3_000_000);
     private static final BigDecimal FEE_RATE = BigDecimal.valueOf(0.01);
+    private static final String ZONE_ID = "Asia/Seoul";
 
     private final TransactionHistoryRepository transactionHistoryRepository;
 
@@ -30,7 +31,7 @@ public class TransferPolicy implements TransferLimitPolicy, FeePolicy {
     }
 
     private void validate(Account fromAccount, BigDecimal amount, LocalDate today){
-        ZonedDateTime start = today.atStartOfDay(ZoneId.of("Asia/Seoul"));
+        ZonedDateTime start = today.atStartOfDay(ZoneId.of(ZONE_ID));
         ZonedDateTime end = start.plusDays(1);
 
         BigDecimal todayTotalTransferAmount =

@@ -4,6 +4,10 @@ import com.wirebarley.codingtest.account.application.dto.request.*;
 import com.wirebarley.codingtest.account.application.dto.response.*;
 import com.wirebarley.codingtest.account.domain.Account;
 import com.wirebarley.codingtest.account.domain.TransactionHistory;
+import com.wirebarley.codingtest.account.domain.exception.AccountException;
+import com.wirebarley.codingtest.account.domain.exception.AccountExceptionMessage;
+import com.wirebarley.codingtest.account.domain.exception.TransferException;
+import com.wirebarley.codingtest.account.domain.exception.TransferExceptionMessage;
 import com.wirebarley.codingtest.account.domain.policy.transfer.TransferPolicy;
 import com.wirebarley.codingtest.account.domain.policy.transfer.TransferLimitPolicy;
 import com.wirebarley.codingtest.account.domain.policy.withdraw.WithdrawLimitPolicy;
@@ -51,7 +55,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountCloseResponseDto close(AccountCloseDto accountCloseDto) {
         Account account = accountRepository.findByIdForUpdate(accountCloseDto.accountId())
-                .orElseThrow(() -> new EntityNotFoundException("해당 계좌가 존재하지 않습니다."));
+                .orElseThrow(() -> new AccountException(AccountExceptionMessage.ACCOUNT_NOT_EXIST));
 
         account.close();
 
@@ -66,7 +70,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public DepositResponseDto deposit(DepositDto depositDto) {
         Account account = accountRepository.findByIdForUpdate(depositDto.accountId())
-                .orElseThrow(() -> new EntityNotFoundException("해당 계좌가 존재하지 않습니다."));
+                .orElseThrow(() -> new AccountException(AccountExceptionMessage.ACCOUNT_NOT_EXIST));
 
         account.deposit(depositDto.amount());
 
@@ -89,7 +93,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public WithdrawResponseDto withdraw(WithdrawDto withdrawDto) {
         Account account = accountRepository.findByIdForUpdate(withdrawDto.accountId())
-                .orElseThrow(() -> new EntityNotFoundException("해당 계좌가 존재하지 않습니다."));
+                .orElseThrow(() -> new AccountException(AccountExceptionMessage.ACCOUNT_NOT_EXIST));
 
         log.debug(
                 "[WithdrawAttempt] accountId={}, amount={}",
@@ -129,12 +133,12 @@ public class AccountServiceImpl implements AccountService {
         Account fromAccount = accounts.stream()
                 .filter(a -> a.getId().equals(transferDto.fromAccountId()))
                 .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("송금자 계좌가 존재하지 않습니다."));
+                .orElseThrow(() -> new TransferException(TransferExceptionMessage.SENDER_ACCOUNT_NOT_EXIST));
 
         Account toAccount = accounts.stream()
                 .filter(a -> a.getId().equals(transferDto.toAccountId()))
                 .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("수취자 계좌가 존재하지 않습니다."));
+                .orElseThrow(() -> new TransferException(TransferExceptionMessage.RECEIVER_ACCOUNT_NOT_EXIST));
 
         log.debug(
                 "[TransferAttempt] fromAccountId={}, toAccountId={}, amount={}",
@@ -164,7 +168,7 @@ public class AccountServiceImpl implements AccountService {
                 transferDto.amount()
         );
 
-        return TransferResponseDto.from(fromAccount, toAccount, transferCtx);
+        return TransferResponseDto.from(fromAccount, toAccount, transferCtx, transferDto);
     }
 }
 
