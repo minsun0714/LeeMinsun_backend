@@ -6,14 +6,12 @@
 | --- | --- | --- |
 | 언어 | Java | 21 |
 | 프레임워크 | Spring Boot | 3.3.5 |
-| 웹 | Spring Web | spring-boot-starter-web |
 | 데이터 접근 | Spring Data JPA | spring-boot-starter-data-jpa |
 | 유효성 검사 | Spring Validation | spring-boot-starter-validation |
 | 모니터링 | Spring Actuator | spring-boot-starter-actuator |
 | ORM | Hibernate | JPA 구현체 |
 | DB | MySQL | 8.0 (docker-compose) |
 | DB(테스트) | H2 | 인메모리 |
-| JDBC 드라이버 | MySQL Connector/J | runtimeOnly |
 | 빌드 | Gradle | 9.2.1 (wrapper) |
 | 테스트 | JUnit 5 | spring-boot-starter-test |
 | 테스트 문서화 | Spring REST Docs | mockmvc |
@@ -22,7 +20,6 @@
 | 컨테이너 | Docker | |
 | 오케스트레이션 | Docker Compose | |
 | CI | GitHub Actions | .github/workflows/ci.yml |
-| 런타임 이미지 | Eclipse Temurin | 21 (alpine) |
 
 ## API 문서
 REST DOCS로 생성한 [API 문서](https://minsun0714.github.io/LeeMinsun_backend/)를 참고해 주세요.
